@@ -3,6 +3,7 @@
 #!/bin/bash
 
 # Root privileges.
+echo
 if [[ $UID -eq 0 ]]
 then
   echo "WELCOME!!!"
@@ -29,6 +30,8 @@ PASSWORD="$RANDOM$(date +%s%N | sha256sum | head -c9)"
 
 SPECIAL_CHARACTER="$(echo '#$%^&*()' | fold -w1 | shuf | head -c1)"
 
+PASS=$PASSWORD$SPECIAL_CHARACTER
+
 useradd -c "$COMMENT" -m $USER_NAME
 
 if [[ $? -ne 0 ]]
@@ -37,8 +40,7 @@ then
   exit 1
 fi
 
-#echo $PASSWORD$SPECIAL_CHARACTER | passwd --stdin $USER_NAME
-echo "$USER_NAME:$PASSWORD$SPECIALCHARACTER" | chpasswd
+echo $PASS | passwd --stdin $USER_NAME
 
 if [[ $? -ne 0 ]]
 then 
@@ -53,5 +55,7 @@ echo "USER_NAME: $USER_NAME"
 echo
 echo "PASSWORD: $PASSWORD" 
 echo
+
+cat /etc/passwd | tail -n1
 
 exit 0
